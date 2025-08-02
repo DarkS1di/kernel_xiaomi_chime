@@ -34,9 +34,9 @@ index 98363cb3d4b1..dafafce397fd 100644
 +				continue;
 +			}
 +#endif
- 		}
- 		*seqp = seq;
- 		return dentry;
+			*seqp = seq;
+			return dentry;
+		}
 @@ -2298,6 +2306,12 @@ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
  		if (dentry->d_name.hash != hash)
  			continue;
@@ -765,9 +765,9 @@ index 74aeabbf0ea4..d6a1eab90e37 100644
  	struct inotify_inode_mark *inode_mark;
  	struct inode *inode;
 @@ -90,6 +108,36 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
- 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
- 	inode = igrab(fsnotify_conn_inode(mark->connector));
- 	if (inode) {
+		 * used only internally to the kernel.
+		 */
+		u32 mask = mark->mask & IN_ALL_EVENTS;
 +#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 +		if (likely(current->susfs_task_state & TASK_STRUCT_NON_ROOT_USER_APP_PROC) &&
 +				unlikely(inode->i_state & INODE_STATE_SUS_KSTAT)) {
@@ -798,9 +798,9 @@ index 74aeabbf0ea4..d6a1eab90e37 100644
 +		}
 +out_seq_printf:
 +#endif
- 		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:0 ",
- 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
- 			   inotify_mark_user_mask(mark));
+		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:%x ",
+			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
+			   mask, mark->ignored_mask);
 diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
 index 7f3787a6b445..47f0a148857b 100644
 --- a/fs/overlayfs/inode.c
@@ -1049,7 +1049,7 @@ index 3c5ce8a0ddc9..dd82d352cb17 100644
  int iterate_dir(struct file *file, struct dir_context *ctx)
  {
  	struct inode *inode = file_inode(file);
-@@ -210,6 +216,11 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+@@ -207,6 +213,11 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
  	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
  		sizeof(long));
  
@@ -1061,7 +1061,7 @@ index 3c5ce8a0ddc9..dd82d352cb17 100644
  	buf->error = verify_dirent_name(name, namlen);
  	if (unlikely(buf->error))
  		return buf->error;
-@@ -299,6 +310,11 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+@@ -296,6 +307,11 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
  	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
  		sizeof(u64));
  
@@ -1082,9 +1082,9 @@ index 3c5ce8a0ddc9..dd82d352cb17 100644
 +		return 0;
 +	}
 +#endif
- 	buf->result = verify_dirent_name(name, namlen);
- 	if (buf->result < 0)
- 		return buf->result;
+	d_ino = ino;
+	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+		buf->result = -EOVERFLOW;
 @@ -470,6 +491,11 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
  	buf->error = -EINVAL;	/* only used if we fail.. */
  	if (reclen > buf->count)
