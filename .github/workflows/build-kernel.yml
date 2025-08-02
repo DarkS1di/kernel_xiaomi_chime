@@ -32,7 +32,7 @@ jobs:
         version: 14
         platform: x64
 
-    - name: KernelSU Next with SUSFS
+    - name: KernelSU Next
       run: | 
         curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -
 
