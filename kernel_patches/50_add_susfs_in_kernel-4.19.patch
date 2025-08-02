@@ -25,7 +25,7 @@ index 98363cb3d4b1..dafafce397fd 100644
  #include "internal.h"
  #include "mount.h"
  
-@@ -2189,6 +2192,11 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
+@@ -2216,6 +2219,11 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
  				continue;
  			if (dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0)
  				continue;
@@ -37,7 +37,7 @@ index 98363cb3d4b1..dafafce397fd 100644
  		}
  		*seqp = seq;
  		return dentry;
-@@ -2272,6 +2280,12 @@ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
+@@ -2298,6 +2306,12 @@ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
  		if (dentry->d_name.hash != hash)
  			continue;
  
@@ -764,7 +764,7 @@ index 74aeabbf0ea4..d6a1eab90e37 100644
  {
  	struct inotify_inode_mark *inode_mark;
  	struct inode *inode;
-@@ -83,6 +101,36 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+@@ -90,6 +108,36 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
  	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
  	inode = igrab(fsnotify_conn_inode(mark->connector));
  	if (inode) {
@@ -1073,7 +1073,7 @@ index 3c5ce8a0ddc9..dd82d352cb17 100644
  	buf->error = verify_dirent_name(name, namlen);
  	if (unlikely(buf->error))
  		return buf->error;
-@@ -401,6 +417,11 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
+@@ -398,6 +414,11 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
  
  	if (buf->result)
  		return -EINVAL;
@@ -1085,7 +1085,7 @@ index 3c5ce8a0ddc9..dd82d352cb17 100644
  	buf->result = verify_dirent_name(name, namlen);
  	if (buf->result < 0)
  		return buf->result;
-@@ -476,6 +497,11 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
+@@ -470,6 +491,11 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
  	buf->error = -EINVAL;	/* only used if we fail.. */
  	if (reclen > buf->count)
  		return -EINVAL;
