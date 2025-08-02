@@ -36,6 +36,19 @@ jobs:
       run: | 
         curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -
 
+    - name: Apply SUSFS patches
+      run: |
+        export KERNEL_ROOT=$GITHUB_WORKSPACE
+
+        echo "Applying SUSFS patches..."
+        cp ./kernel_patches/50_add_susfs_in_kernel-*.patch $KERNEL_ROOT/
+
+        cp ./kernel_patches/fs/* $KERNEL_ROOT/fs/
+        cp ./kernel_patches/include/linux/* $KERNEL_ROOT/include/linux/
+
+        cd $KERNEL_ROOT
+        patch -p1 < 50_add_susfs_in_kernel-*.patch || echo "Manual patch may be required"
+
     - name: Download Neutron Toolchain
       run: bash scripts/hani-ci.sh --tools
 
