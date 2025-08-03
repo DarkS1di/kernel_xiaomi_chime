@@ -34,7 +34,7 @@ jobs:
 
     - name: KernelSU Next
       run: | 
-        curl -LSs "https://raw.githubusercontent.com/GYD40/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -
+        curl -LSs "https://raw.githubusercontent.com/DarkS1di/KernelSU-Next/next-susfs_v1.5.5-v1.5.7/kernel/setup.sh" | bash -
 
     - name: Apply SUSFS patches
       run: |
